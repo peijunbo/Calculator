@@ -20,7 +20,10 @@ fun App() {
         var greetingText by remember { mutableStateOf("Hello, World!") }
         var showImage by remember { mutableStateOf(false) }
         Surface(modifier = Modifier.fillMaxSize()) {
-            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                Modifier.fillMaxWidth().statusBarsPadding(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 KeyBoard {
 
                 }
@@ -30,3 +33,4 @@ fun App() {
 }
 
 expect fun getPlatformName(): String
+expect fun Modifier.statusBarsPadding(): Modifier
