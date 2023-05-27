@@ -1,7 +1,9 @@
 package ui
 
 import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -72,7 +74,7 @@ fun KeyButton(
     var isPressed by remember { mutableStateOf(false) }
     val cornerPercent: Int by animateIntAsState(
         if (isPressed) 16 else 100,
-        animationSpec = tween(durationMillis = 400, easing = CubicBezierEasing(0.05f, 0.7f, 0.1f, 1f)),
+        animationSpec = tween(durationMillis = 150, easing = CubicBezierEasing(0.05f, 0.7f, 0.1f, 1f)),
     )
     val hapticFeedback = LocalHapticFeedback.current
 
