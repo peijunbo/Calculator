@@ -1,5 +1,7 @@
 package ui
 
-object StateHolder {
+import kotlinx.coroutines.flow.MutableSharedFlow
 
+object StateHolder {
+    val keyFlow = MutableSharedFlow<Key>()
 }
