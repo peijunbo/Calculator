@@ -190,7 +190,10 @@ fun KeyButton(
             }) {
             Text(
                 fontSize = 36.sp,
-                text = key.text,
+                text = when (key) {
+                    is Key.NumberKey -> key.number
+                    is Key.OperatorKey -> key.operator
+                },
                 textAlign = TextAlign.Center,
                 color = contentColor
             )
