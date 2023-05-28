@@ -12,19 +12,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import theme.AppTheme
 import theme.Surfaces
+import ui.Key
 import ui.KeyBoard
+import ui.Screen
+import ui.concatKey
 
 val stringFlow = MutableStateFlow("")
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
-
-    val string by stringFlow.collectAsState()
-
+    val expressionFlow = MutableStateFlow("")
     AppTheme {
         var greetingText by remember { mutableStateOf("Hello, World!") }
         var showImage by remember { mutableStateOf(false) }
@@ -36,9 +38,13 @@ fun App() {
                 modifier = Modifier.fillMaxSize().navigationBarsPadding(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                KeyBoard(textField = {
-                    TextField(string, onValueChange = {})
-                }) { key ->
+
+                val expression by expressionFlow.collectAsState()
+                Screen(expression = expression)
+                KeyBoard(textField = {}) { key: Key ->
+                    expressionFlow.update {
+                        concatKey(it, key)
+                    }
 
                 }
             }
