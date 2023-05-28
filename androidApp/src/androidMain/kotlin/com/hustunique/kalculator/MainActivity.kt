@@ -1,4 +1,4 @@
-package com.myapplication
+package com.hustunique.kalculator
 
 import MainView
 import android.app.Activity
