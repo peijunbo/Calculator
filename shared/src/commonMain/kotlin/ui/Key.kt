@@ -1,9 +1,10 @@
 package ui
 
-sealed interface Key {
-    sealed class NumberKey(val number: String) : Key
-    sealed class OperatorKey(val operator: String) : Key
-    sealed class ActionKey(val action: String) : Key
+sealed class Key(val string: String) {
+
+    sealed class NumberKey(val number: String) : Key(number)
+    sealed class OperatorKey(val operator: String) : Key(operator)
+    sealed class ActionKey(val action: String) : Key(action)
     object Zero : NumberKey("0")
 
     object One : NumberKey("1")
