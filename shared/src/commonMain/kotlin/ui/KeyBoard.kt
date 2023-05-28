@@ -135,37 +135,31 @@ fun KeyBoard(
     }
 }
 
-const val ANIMATION_DURATION = 350
+const val ANIMATION_DURATION = 320
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun KeyButton(
     modifier: Modifier = Modifier,
     key: Key,
-    containerColor: Color = Surfaces.surfaceContainer(Surfaces.STANDARD),
+    containerColor: Color = Surfaces.surfaceContainer(Surfaces.HIGHEST),
     contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     onKeyPressed: (Key) -> Unit
 ) {
     var isPressed by remember { mutableStateOf(false) }
 
-//    val cornerPercent: Int by
-//    animateIntAsState(
-//        if (isPressed) 16 else 100,
-//        animationSpec = tween(durationMillis = 400, easing = CubicBezierEasing(0.05f, 0.7f, 0.1f, 1f)),
-//    )
     val cornerPercent = remember {
         Animatable(100f)
     }
     LaunchedEffect(isPressed) {
         if (isPressed) cornerPercent.animateTo(
             targetValue = 20f,
-            animationSpec = tween(ANIMATION_DURATION, easing = CubicBezierEasing(0f, 1f, .8f, 1f))
+            animationSpec = tween(ANIMATION_DURATION, easing = CubicBezierEasing(0f, 1f, .6f, 1f))
         )
         else cornerPercent.animateTo(
             targetValue = 100f,
             animationSpec = tween(
                 ANIMATION_DURATION, easing = LinearEasing
-//            CubicBezierEasing(0f, 0f, 0f, 1f)
             )
         )
     }
@@ -186,7 +180,6 @@ fun KeyButton(
                     awaitFirstDown().also {
                         isPressed = true
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-//                    it.consume()
                     }
                     waitForUpOrCancellation()?.also {
                         isPressed = false
