@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import com.kyant.monet.TonalPalettes.Companion.toTonalPalettes
 
 val LocalTonalPalettes = staticCompositionLocalOf {
-    Color.Green.toTonalPalettes()
+    Color.Blue.toTonalPalettes()
 }
 
 inline val Number.a1: Color

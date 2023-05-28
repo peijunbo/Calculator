@@ -27,5 +27,23 @@ private val iosNotchInset = object : WindowInsets {
     override fun getBottom(density: Density): Int = 0
 }
 
+private val iosNavigationInset = object : WindowInsets {
+    override fun getBottom(density: Density): Int {
+        val safeAreaInsets = UIApplication.sharedApplication.keyWindow?.safeAreaInsets
+        return if (safeAreaInsets != null) {
+            val topInset = safeAreaInsets.useContents { this.bottom }
+            (topInset * density.density).toInt()
+        } else {
+            0
+        }
+    }
+
+    override fun getLeft(density: Density, layoutDirection: LayoutDirection): Int = 0
+    override fun getRight(density: Density, layoutDirection: LayoutDirection): Int = 0
+    override fun getTop(density: Density): Int = 0
+}
+
 actual fun Modifier.statusBarsPadding(): Modifier =
     this.windowInsetsPadding(iosNotchInset)
+
+actual fun Modifier.navigationBarsPadding(): Modifier = this.windowInsetsPadding(iosNavigationInset)

@@ -5,12 +5,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import com.kyant.monet.LocalTonalPalettes
+import com.kyant.monet.PaletteStyle
 import com.kyant.monet.TonalPalettes.Companion.toTonalPalettes
 import com.kyant.monet.dynamicColorScheme
 
 @Composable
 fun AppTheme(content: @Composable () -> Unit) {
-    CompositionLocalProvider(LocalTonalPalettes provides Color.Green.toTonalPalettes()) {
+    CompositionLocalProvider(LocalTonalPalettes provides Color.Blue.toTonalPalettes(PaletteStyle.Expressive)) {
         val colorScheme = dynamicColorScheme()
         MaterialTheme(colorScheme = colorScheme, content = content)
     }
