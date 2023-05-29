@@ -72,8 +72,7 @@ class TonalPalettes(
             style: PaletteStyle = PaletteStyle.TonalSpot,
             tonalValues: DoubleArray = M3TonalValues
         ): TonalPalettes {
-            println("${this.toArgb()} + $style to Palettes")
-            val tonalPalette = TonalPalettes(
+            return TonalPalettes(
                 keyColor = this,
                 style = style,
                 accent1 = tonalValues.associateWith { transform(it, style.accent1Spec) },
@@ -82,8 +81,6 @@ class TonalPalettes(
                 neutral1 = M3SurfaceTonalValues.associateWith { transform(it, style.neutral1Spec) },
                 neutral2 = tonalValues.associateWith { transform(it, style.neutral2Spec) }
             )
-            println("a20=${tonalPalette.accent1(20.0).toArgb()}")
-            return tonalPalette
         }
 
         private fun Color.toTonalPalette(
