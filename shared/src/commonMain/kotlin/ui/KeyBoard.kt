@@ -73,7 +73,7 @@ fun ColumnScope.KeyBoard(
             .weight(1f, fill = true)
             .statusBarsPadding(),
     ) {
-//        textField()
+        textField()
     }
     Column(modifier = Modifier.padding(horizontal = 4.dp)) {
         Row(modifier = Modifier) {

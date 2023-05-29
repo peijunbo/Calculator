@@ -32,7 +32,7 @@ fun App() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 val coroutineScope = rememberCoroutineScope()
-                KeyBoard(textField = {}) { key: Key ->
+                KeyBoard(textField = {Screen()}) { key: Key ->
                     coroutineScope.launch {
 
                         StateHolder.keyFlow.emit(key)
