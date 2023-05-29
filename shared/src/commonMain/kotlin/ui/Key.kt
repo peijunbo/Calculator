@@ -1,8 +1,10 @@
 package ui
 
-sealed interface Key {
-    sealed class NumberKey(val number: String) : Key
-    sealed class OperatorKey(val operator: String) : Key
+sealed class Key(val string: String) {
+
+    sealed class NumberKey(val number: String) : Key(number)
+    sealed class OperatorKey(val operator: String) : Key(operator)
+    sealed class ActionKey(val action: String) : Key(action)
     object Zero : NumberKey("0")
 
     object One : NumberKey("1")
@@ -21,9 +23,10 @@ sealed interface Key {
     object Division : OperatorKey("/")
     object Root : OperatorKey("√")
     object Power : OperatorKey("^")
-    object Remainder : OperatorKey("%")
-    object Equal : OperatorKey("=")
-    object AC : OperatorKey("AC")
+    object Percent : OperatorKey("%")
+    object Equal : ActionKey("=")
+    object AC : ActionKey("AC")
     object Clear : OperatorKey("C")
-    object Delete : OperatorKey("⌫")
+    object Delete : ActionKey("⌫")
+    object Brackets : OperatorKey("( )")
 }
