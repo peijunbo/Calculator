@@ -27,6 +27,7 @@ import androidx.compose.material.icons.outlined.Backspace
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Percent
 import androidx.compose.material.icons.outlined.Remove
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -68,7 +69,7 @@ fun ColumnScope.KeyBoard(
         ).background(Surfaces.surfaceContainer(Surfaces.HIGHEST)).weight(3f, fill = true)
             .statusBarsPadding().horizontalSystemBarsPadding(),
     ) {
-//        textField()
+        textField()
     }
     Column(
         modifier = Modifier.horizontalSystemBarsPadding().padding(horizontal = 4.dp).weight(4f)
