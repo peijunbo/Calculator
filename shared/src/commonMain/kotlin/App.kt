@@ -26,6 +26,7 @@ fun App() {
     val string by stringFlow.collectAsState()
 
     AppTheme {
+        println(isDeviceInPortraitMode())
         var greetingText by remember { mutableStateOf("Hello, World!") }
         var showImage by remember { mutableStateOf(false) }
         Surface(
@@ -49,3 +50,9 @@ fun App() {
 expect fun getPlatformName(): String
 expect fun Modifier.statusBarsPadding(): Modifier
 expect fun Modifier.navigationBarsPadding(): Modifier
+
+@Composable
+expect fun Modifier.horizontalSystemBarsPadding(): Modifier
+
+@Composable
+expect fun isDeviceInPortraitMode(): Boolean
