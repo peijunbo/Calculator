@@ -22,8 +22,6 @@ import ui.StateHolder
 fun App() {
     AppTheme {
         println(isDeviceInPortraitMode())
-        var greetingText by remember { mutableStateOf("Hello, World!") }
-        var showImage by remember { mutableStateOf(false) }
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = Surfaces.surfaceContainer(Surfaces.LOWEST)

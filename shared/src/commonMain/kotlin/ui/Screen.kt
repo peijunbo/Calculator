@@ -24,11 +24,9 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.sp
 import data.Calculator
 import data.Expression
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import theme.Surfaces
 

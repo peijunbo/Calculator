@@ -28,5 +28,5 @@ sealed class Key(val string: String) {
     object AC : ActionKey("AC")
     object Clear : OperatorKey("C")
     object Delete : ActionKey("⌫")
-    object Brackets : OperatorKey("( )")
+    object Brackets : OperatorKey("()")
 }
