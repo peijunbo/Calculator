@@ -9,10 +9,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.awaitDragOrCancellation
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
@@ -35,10 +33,8 @@ import androidx.compose.material.icons.outlined.Backspace
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Percent
 import androidx.compose.material.icons.outlined.Remove
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -72,9 +68,12 @@ import statusBarsPadding
 import theme.Surfaces
 import ui.component.AutoSizeText
 
-const val rate1 = 1f / 4f
-const val rate2 = 4f / 7f
-const val rate3 = 1f
+
+const val RATE_LOW = 1f / 4f
+const val RATE_HIGH = 4f / 7f
+const val MID_RATE_HIGH = (RATE_LOW + RATE_HIGH) / 2
+const val MID_RATE_LOW = RATE_LOW / 3 * 2
+
 
 @Composable
 fun ColumnScope.KeyBoard(
@@ -82,11 +81,15 @@ fun ColumnScope.KeyBoard(
     parentHeight: Dp,
     onKeyPressed: (Key) -> Unit = {}
 ) {
-    val offset = remember { Animatable(0f) }
+    val dragOffset = remember { Animatable(0f) }
     val coroutineScope = rememberCoroutineScope()
     val localDensity = LocalDensity.current
-    LazyColumn(modifier = Modifier.height(localDensity.run { offset.value.toDp() }),
-        reverseLayout = true) {
+    val parentPxHeight = localDensity.run { parentHeight.toPx() }
+    val localHapticFeedback = LocalHapticFeedback.current
+    LazyColumn(
+        modifier = Modifier.height(localDensity.run { dragOffset.value.toDp() }),
+        reverseLayout = true
+    ) {
         items(10) { index ->
             Text("item$index", fontSize = 48.sp)
         }
@@ -100,41 +103,39 @@ fun ColumnScope.KeyBoard(
             .statusBarsPadding().horizontalSystemBarsPadding()
             .draggable(
                 state = rememberDraggableState {
-                    println("parentHeight$parentHeight")
+                    if (
+                        (dragOffset.targetValue < parentPxHeight * MID_RATE_LOW
+                                && dragOffset.targetValue + it >= parentPxHeight * MID_RATE_LOW)
+                        || (dragOffset.targetValue > parentPxHeight * MID_RATE_LOW
+                                && dragOffset.targetValue + it <= parentPxHeight * MID_RATE_LOW)
+                        || (dragOffset.targetValue < parentPxHeight * MID_RATE_HIGH
+                                && dragOffset.targetValue + it >= parentPxHeight * MID_RATE_HIGH)
+                        || (dragOffset.targetValue > parentPxHeight * MID_RATE_HIGH
+                                && dragOffset.targetValue + it <= parentPxHeight * MID_RATE_HIGH)
+                    ) {
+                        localHapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                    }
                     coroutineScope.launch {
-                        offset.animateTo(
-                            targetValue = offset.targetValue + it
+                        dragOffset.animateTo(
+                            targetValue = dragOffset.targetValue + it
                         )
                     }
                 },
                 orientation = Orientation.Vertical,
                 onDragStopped = {
-                    val now = localDensity.run { offset.value.toDp() }
+                    val now = localDensity.run { dragOffset.value.toDp() }
                     val rate: Float = now / parentHeight
-                    if (rate < rate1) {
-                        if (rate > rate1 - rate) {
-                            offset.animateTo(
-                                targetValue = localDensity.run { parentHeight.toPx() * rate1 }
-                            )
-                        } else {
-                            offset.animateTo(
-                                targetValue = 0f
-                            )
-                        }
-                    } else if (rate < rate2) {
-                        if (rate - rate1 > rate2 - rate) {
-                            offset.animateTo(
-                                targetValue = localDensity.run { parentHeight.toPx() * rate2 }
-                            )
-                        } else {
-                            offset.animateTo(
-                                targetValue = localDensity.run { parentHeight.toPx() * rate1 }
-                            )
-                        }
+                    if (rate < MID_RATE_LOW) {
+                        dragOffset.animateTo(
+                            targetValue = 0f
+                        )
+                    } else if (rate < MID_RATE_HIGH) {
+                        dragOffset.animateTo(
+                            targetValue = parentPxHeight * RATE_LOW
+                        )
                     } else {
-
-                        offset.animateTo(
-                            targetValue = localDensity.run { parentHeight.toPx() * rate1 }
+                        dragOffset.animateTo(
+                            targetValue = parentPxHeight * RATE_HIGH
                         )
                     }
                 }
@@ -144,15 +145,13 @@ fun ColumnScope.KeyBoard(
     }
     Column(
         modifier = Modifier.horizontalSystemBarsPadding().offset {
-            val parentPxHeight = parentHeight.toPx()
             var yOffset = 0f
-            if (offset.value / parentPxHeight > rate1) {
-                yOffset = offset.value - parentPxHeight * rate1
+            if (dragOffset.value > parentPxHeight * RATE_LOW) {
+                yOffset = dragOffset.value - parentPxHeight * RATE_LOW
             }
             IntOffset(0, yOffset.toInt())
-        }
-            .background(Color.Red).padding(horizontal = 4.dp)
-            .height(parentHeight * 4 / 7)
+        }.padding(horizontal = 4.dp)
+            .height(parentHeight * 4f / 7f)
     ) {
         if (!isDeviceInPortraitMode()) {
             Row(modifier = Modifier.weight(1f)) {
