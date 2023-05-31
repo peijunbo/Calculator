@@ -1,14 +1,23 @@
 package database
 
 import com.hustunique.kalculator.kmm.shared.cache.AppDatabase
-import com.hustunique.kalculator.kmm.shared.cache.DatabaseDriverFactory
+import kotlin.native.concurrent.ThreadLocal
 
-class Database(databaseDriverFactory: DatabaseDriverFactory) {
-    private val database = AppDatabase(databaseDriverFactory.createDriver())
-    private val dbQuery = database.appDatabaseQueries
+
+@ThreadLocal
+object DatabaseUtil {
+    private var database: AppDatabase? = null
+    fun init(value: AppDatabase) {
+        if (database == null)
+            this.database = value
+
+    }
+
+    private val dbQuery by lazy { database!!.appDatabaseQueries }
     fun clearAllHistories() {
         dbQuery.removeAllHistories()
     }
+
     fun insertHistory(history: History) {
         dbQuery.insertHistory(
             null,
@@ -16,6 +25,7 @@ class Database(databaseDriverFactory: DatabaseDriverFactory) {
             history.result
         )
     }
+
     fun selectAllHistories() = dbQuery.selectAllHistories(::mapHistorySelecting).executeAsList()
 
 }

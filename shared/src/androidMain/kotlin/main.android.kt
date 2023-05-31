@@ -8,15 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.LayoutDirection
-import database.Database
 
 actual fun getPlatformName(): String = "Android"
 
 
 @Composable
-fun MainView(
-    database: Database? = null
-) = App(database)
+fun MainView() = App()
 actual fun Modifier.statusBarsPadding(): Modifier = this.statusBarsPadding()
 actual fun Modifier.navigationBarsPadding(): Modifier = this.navigationBarsPadding()
 

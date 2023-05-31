@@ -1,6 +1,7 @@
 package com.hustunique.kalculator
 
 import MainView
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -12,8 +13,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.hustunique.kalculator.kmm.shared.cache.DatabaseDriverFactory
-import database.HistorySDK
+import database.DatabaseUtil
 
 private tailrec fun Context.findWindow(): Window? =
     when (this) {
@@ -25,7 +25,6 @@ private tailrec fun Context.findWindow(): Window? =
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             WindowCompat.setDecorFitsSystemWindows(window, false)
             window.statusBarColor = Color.TRANSPARENT
@@ -36,9 +35,7 @@ class MainActivity : AppCompatActivity() {
                 WindowCompat.getInsetsController(it, view).isAppearanceLightStatusBars =
                     ((resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)) == Configuration.UI_MODE_NIGHT_NO)
             }
-            MainView(
-                HistorySDK(databaseDriverFactory = DatabaseDriverFactory(this)).database
-            )
+            MainView()
         }
     }
 }
