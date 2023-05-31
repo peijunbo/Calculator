@@ -53,7 +53,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -65,7 +64,6 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import statusBarsPadding
 import theme.Surfaces
-import ui.component.AutoSizeText
 
 
 const val RATE_LOW = 1f / 4f
@@ -290,6 +288,17 @@ fun RowScope.KeyButton(
                 Key.Percent -> Icons.Outlined.Percent
                 Key.Plus -> Icons.Outlined.Add
                 Key.Division -> painterResource("division.xml")
+                Key.One -> painterResource("one.xml")
+                Key.Two -> painterResource("two.xml")
+                Key.Three -> painterResource("three.xml")
+                Key.Four -> painterResource("four.xml")
+                Key.Five -> painterResource("five.xml")
+                Key.Six -> painterResource("six.xml")
+                Key.Seven -> painterResource("seven.xml")
+                Key.Eight -> painterResource("eight.xml")
+                Key.Nine -> painterResource("nine.xml")
+                Key.Zero -> painterResource("zero.xml")
+                Key.AC -> painterResource("ac.xml")
                 else -> null
             }
             when (icon) {
@@ -304,22 +313,38 @@ fun RowScope.KeyButton(
                 }
 
                 is Painter -> {
-                    Image(
-                        painter = icon,
-                        contentDescription = key.string,
-                        colorFilter = ColorFilter.tint(contentColor),
-                        contentScale = ContentScale.FillHeight,
-                        modifier = Modifier.align(Alignment.Center).padding(8.dp).size(40.dp)
-                    )
+                    if (key is Key.NumberKey)
+                        Image(
+                            painter = icon,
+                            contentDescription = key.string,
+                            colorFilter = ColorFilter.tint(contentColor),
+                            contentScale = ContentScale.FillHeight,
+                            modifier = Modifier.align(Alignment.Center).padding(8.dp).size(32.dp)
+                        )
+                    else
+                        Image(
+                            painter = icon,
+                            contentDescription = key.string,
+                            colorFilter = ColorFilter.tint(contentColor),
+                            contentScale = ContentScale.FillHeight,
+                            modifier = Modifier.align(Alignment.Center).padding(8.dp).size(40.dp)
+                        )
                 }
 
                 else -> {
-                    AutoSizeText(
-                        fontSize = 40.sp,
-                        text = key.string,
-                        textAlign = TextAlign.Center,
-                        color = contentColor,
-                        modifier = Modifier.padding(4.dp)
+//                    AutoSizeText(
+//                        fontSize = 40.sp,
+//                        text = key.string,
+//                        textAlign = TextAlign.Center,
+//                        color = contentColor,
+//                        modifier = Modifier.padding(4.dp)
+//                    )
+                    Image(
+                        painter = painterResource("one.xml"),
+                        contentDescription = key.string,
+                        colorFilter = ColorFilter.tint(contentColor),
+                        contentScale = ContentScale.FillHeight,
+                        modifier = Modifier.align(Alignment.Center).padding(vertical = 8.dp)
                     )
                 }
             }
