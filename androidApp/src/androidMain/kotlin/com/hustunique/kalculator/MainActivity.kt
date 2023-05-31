@@ -12,6 +12,8 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.hustunique.kalculator.kmm.shared.cache.DatabaseDriverFactory
+import database.HistorySDK
 
 private tailrec fun Context.findWindow(): Window? =
     when (this) {
@@ -34,7 +36,9 @@ class MainActivity : AppCompatActivity() {
                 WindowCompat.getInsetsController(it, view).isAppearanceLightStatusBars =
                     ((resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)) == Configuration.UI_MODE_NIGHT_NO)
             }
-            MainView()
+            MainView(
+                HistorySDK(databaseDriverFactory = DatabaseDriverFactory(this)).database
+            )
         }
     }
 }
