@@ -1,10 +1,6 @@
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,32 +42,6 @@ fun App() {
                 },
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row(
-                    modifier = Modifier.padding(top = 36.dp)
-                ) {
-                    var histories by remember { mutableStateOf("") }
-                    Button(
-                        onClick = {
-                            coroutineScope.launch {
-                                println(DatabaseUtil)
-                                DatabaseUtil.insertHistory(History(0, "expression", "result"))
-
-                            }
-                        }) {
-                        Text("insert")
-                    }
-                    Button(
-                        onClick = {
-                            coroutineScope.launch {
-                                val res = DatabaseUtil.selectAllHistories()
-                                println(res)
-                                histories = res.toString()
-                            }
-                        }) {
-                        Text("select")
-                    }
-                    Text(modifier = Modifier.weight(1f), text = histories)
-                }
                 KeyBoard(textField = { Screen() }, parentHeight = windowHeight) { key: Key ->
                     coroutineScope.launch {
                         StateHolder.keyFlow.emit(key)
