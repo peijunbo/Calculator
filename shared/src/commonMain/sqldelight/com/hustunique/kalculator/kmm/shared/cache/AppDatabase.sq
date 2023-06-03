@@ -1,15 +1,16 @@
 CREATE TABLE History (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     expression TEXT NOT NULL,
-    result TEXT NOT NULL
+    result TEXT NOT NULL,
+    date INTEGER NOT NULL
 );
 
 insertHistory:
-INSERT INTO History(id, expression, result)
-VALUES (?, ?, ?);
+INSERT INTO History(id, expression, result, date)
+VALUES (?, ?, ?, ?);
 
 removeAllHistories:
 DELETE FROM History;
 
 selectAllHistories:
-SELECT  History.* FROM History;
+SELECT  History.* FROM History ORDER BY date DESC ;

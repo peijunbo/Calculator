@@ -27,7 +27,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import data.Calculator
 import data.Expression
+import database.DatabaseUtil
+import database.History
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import theme.Surfaces
 
 val calculator = Calculator()
@@ -45,6 +52,7 @@ fun Screen(
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
+
     var isError by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     if (subscriptionCount == 0) { // Only launch one collector
@@ -67,6 +75,16 @@ fun Screen(
                             isError = true
                             expression
                         } else {
+                            val expressionText = expression.text
+                            val resultText = result
+                            withContext(Dispatchers.Default) {
+                                DatabaseUtil.insertHistory(History(
+                                    0,
+                                    expressionText,
+                                    resultText,
+                                    getDateLong()
+                                ))
+                            }
                             result = ""
                             TextFieldValue(res, TextRange(res.length))
                         }
@@ -101,7 +119,7 @@ fun Screen(
                     textAlign = TextAlign.Left
                 ),
                 colors = TextFieldDefaults.textFieldColors(
-                    textColor = contentColor,
+                    textColor = contentColor, //TODO change color on error
                     backgroundColor = containerColor,
                     disabledIndicatorColor = Color.Transparent,
                     errorIndicatorColor = Color.Transparent,

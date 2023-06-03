@@ -27,6 +27,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
@@ -39,6 +41,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,6 +64,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import database.DatabaseUtil
 import database.History
 import horizontalSystemBarsPadding
 import isDeviceInPortraitMode
@@ -89,26 +93,32 @@ fun ColumnScope.KeyBoard(
     val localDensity = LocalDensity.current
     val parentPxHeight = localDensity.run { parentHeight.toPx() }
     val localHapticFeedback = LocalHapticFeedback.current
+    val histories by DatabaseUtil.histories.collectAsState(listOf())
     LazyColumn(
         modifier = Modifier.fillMaxWidth().height(localDensity.run { dragOffset.value.toDp() })
             .background(color = Surfaces.surfaceContainer()),
         reverseLayout = true
     ) {
-        items(10) { index ->
+        itemsIndexed(histories) {index: Int, history: History ->
             Column {
-                if (index % 3 == 0) {
+                if (
+                    index == histories.size - 1 ||
+                    (index < histories.size - 1 && dateLongToString(history.date) != dateLongToString( histories[index + 1].date))
+                ) {
                     Divider(modifier = Modifier.fillMaxWidth())
-                    Text("昨天", fontSize = 36.sp)
+                    Text(dateLongToString(history.date), fontSize = 36.sp)
                 }
                 Column(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp, horizontal = 16.dp),
                     horizontalAlignment = Alignment.End
                 ) {
-                    Text("expression$index", fontSize = 36.sp)
-                    Text("result$index", fontSize = 36.sp)
+                    Text(history.expression, fontSize = 36.sp)
+                    Text(history.result, fontSize = 36.sp)
                 }
             }
+
         }
+
     }
     Column(
         modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp).clip(
