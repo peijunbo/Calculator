@@ -17,6 +17,7 @@ import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +34,7 @@ import androidx.compose.material.icons.outlined.Backspace
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Percent
 import androidx.compose.material.icons.outlined.Remove
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,6 +54,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
@@ -59,6 +62,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import database.History
 import horizontalSystemBarsPadding
 import isDeviceInPortraitMode
 import kotlinx.coroutines.launch
@@ -87,11 +91,24 @@ fun ColumnScope.KeyBoard(
     val parentPxHeight = localDensity.run { parentHeight.toPx() }
     val localHapticFeedback = LocalHapticFeedback.current
     LazyColumn(
-        modifier = Modifier.height(localDensity.run { dragOffset.value.toDp() }),
+        modifier = Modifier.fillMaxWidth().height(localDensity.run { dragOffset.value.toDp() })
+            .background(color = Surfaces.surfaceContainer()),
         reverseLayout = true
     ) {
         items(10) { index ->
-            Text("item$index", fontSize = 48.sp)
+            Column {
+                if (index % 3 == 0) {
+                    Divider(modifier = Modifier.fillMaxWidth())
+                    Text("昨天", fontSize = 36.sp)
+                }
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp, horizontal = 16.dp),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text("expression$index", fontSize = 36.sp)
+                    Text("result$index", fontSize = 36.sp)
+                }
+            }
         }
     }
     Column(
@@ -329,3 +346,13 @@ fun RowScope.KeyButton(
         }
     }
 }
+
+@Composable
+fun HistoryDate(
+    history: History
+) {
+    Row() {
+        Text("昨天", fontSize = 28.sp)
+    }
+}
+

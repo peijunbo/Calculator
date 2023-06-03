@@ -1,10 +1,6 @@
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,13 +9,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import database.Database
-import com.hustunique.kalculator.kmm.shared.cache.DatabaseDriverFactory
-import database.History
 import kotlinx.coroutines.launch
 import theme.AppTheme
 import theme.Surfaces
@@ -50,32 +43,6 @@ fun App(
                 },
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row(
-                    modifier = Modifier.padding(top = 36.dp)
-                ) {
-                    var histories by remember { mutableStateOf("") }
-                    Button(
-                        onClick = {
-                            coroutineScope.launch {
-                                println(database)
-                                database?.insertHistory(History(0, "expression", "result"))
-
-                            }
-                        }) {
-                        Text("insert")
-                    }
-                    Button(
-                        onClick = {
-                            coroutineScope.launch {
-                                val res = database?.selectAllHistories()
-                                println(res)
-                                histories = res.toString()
-                            }
-                        }) {
-                        Text("select")
-                    }
-                    Text(modifier = Modifier.weight(1f),text = histories)
-                }
                 KeyBoard(textField = { Screen() }, parentHeight = windowHeight) { key: Key ->
                     coroutineScope.launch {
                         StateHolder.keyFlow.emit(key)
