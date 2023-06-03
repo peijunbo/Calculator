@@ -2,6 +2,12 @@ package ui
 
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 
 fun TextFieldValue.concatKey(key: Key): TextFieldValue {
@@ -53,3 +59,9 @@ fun TextFieldValue.concatKey(key: Key): TextFieldValue {
         selection = TextRange(index, index)
     )
 }
+
+fun dateLongToString(date: Long): String =
+    Instant.fromEpochMilliseconds(date).toLocalDateTime(TimeZone.currentSystemDefault()).date.toString()
+
+fun getDateLong(): Long =
+    Clock.System.now().toEpochMilliseconds()

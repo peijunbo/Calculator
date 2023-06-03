@@ -7,5 +7,6 @@ import kotlinx.serialization.Serializable
 data class History(
     val id: Long,
     val expression: String,
-    val result: String
+    val result: String,
+    val date: Long
 )
