@@ -346,7 +346,7 @@ fun RowScope.KeyButton(
                         text = key.string,
                         textAlign = TextAlign.Center,
                         color = contentColor,
-                        modifier = Modifier.padding(4.dp)
+                        modifier = Modifier.fillMaxSize().align(Alignment.Center)
                     )
                 }
             }
