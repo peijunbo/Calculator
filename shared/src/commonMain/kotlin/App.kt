@@ -9,6 +9,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
+import database.DatabaseUtil
+import database.History
 import kotlinx.coroutines.launch
 import theme.AppTheme
 import theme.Surfaces
@@ -20,20 +25,25 @@ import ui.StateHolder
 
 @Composable
 fun App() {
+    val localDensity = LocalDensity.current
+    val coroutineScope = rememberCoroutineScope()
     AppTheme {
         println(isDeviceInPortraitMode())
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = Surfaces.surfaceContainer(Surfaces.LOWEST)
         ) {
+            var windowHeight by remember { mutableStateOf(0.dp) }
             Column(
-                modifier = Modifier.fillMaxSize().navigationBarsPadding(),
+                modifier = Modifier.fillMaxSize().navigationBarsPadding().onSizeChanged {
+                    with(localDensity) {
+                        windowHeight = it.height.toDp()
+                    }
+                },
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val coroutineScope = rememberCoroutineScope()
-                KeyBoard(textField = {Screen()}) { key: Key ->
+                KeyBoard(textField = { Screen() }, parentHeight = windowHeight) { key: Key ->
                     coroutineScope.launch {
-
                         StateHolder.keyFlow.emit(key)
                     }
                 }

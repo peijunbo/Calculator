@@ -5,13 +5,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.window.ComposeUIViewController
+import com.hustunique.kalculator.kmm.shared.cache.AppDatabase
+import com.squareup.sqldelight.db.SqlDriver
+import database.DatabaseUtil
+import database.createDriver
 import kotlinx.cinterop.useContents
 import platform.UIKit.UIApplication
 import platform.UIKit.UIScreen
 
 actual fun getPlatformName(): String = "iOS"
 
-fun MainViewController() = ComposeUIViewController { App() }
+fun MainViewController() = ComposeUIViewController {
+    DatabaseUtil.init(AppDatabase(createDriver()))
+    App()
+}
+
 
 private val iosNotchInset = object : WindowInsets {
     override fun getTop(density: Density): Int {

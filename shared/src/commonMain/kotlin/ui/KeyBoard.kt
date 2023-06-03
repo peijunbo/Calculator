@@ -8,18 +8,25 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
@@ -27,13 +34,15 @@ import androidx.compose.material.icons.outlined.Backspace
 import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.material.icons.outlined.Percent
 import androidx.compose.material.icons.outlined.Remove
-import androidx.compose.material3.Icon
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,12 +53,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.HorizontalAlignmentLine
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import database.History
 import horizontalSystemBarsPadding
 import isDeviceInPortraitMode
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import statusBarsPadding
@@ -57,22 +72,102 @@ import theme.Surfaces
 import ui.component.AutoSizeText
 
 
+const val RATE_LOW = 1f / 4f
+const val RATE_HIGH = 4f / 7f
+const val MID_RATE_HIGH = (RATE_LOW + RATE_HIGH) / 2
+const val MID_RATE_LOW = RATE_LOW / 3 * 2
+
+
 @Composable
 fun ColumnScope.KeyBoard(
-    textField: @Composable ColumnScope.() -> Unit, onKeyPressed: (Key) -> Unit = {}
+    textField: @Composable ColumnScope.() -> Unit,
+    parentHeight: Dp,
+    onKeyPressed: (Key) -> Unit = {}
 ) {
+    val dragOffset = remember { Animatable(0f) }
+    val coroutineScope = rememberCoroutineScope()
+    val localDensity = LocalDensity.current
+    val parentPxHeight = localDensity.run { parentHeight.toPx() }
+    val localHapticFeedback = LocalHapticFeedback.current
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth().height(localDensity.run { dragOffset.value.toDp() })
+            .background(color = Surfaces.surfaceContainer()),
+        reverseLayout = true
+    ) {
+        items(10) { index ->
+            Column {
+                if (index % 3 == 0) {
+                    Divider(modifier = Modifier.fillMaxWidth())
+                    Text("昨天", fontSize = 36.sp)
+                }
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp, horizontal = 16.dp),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text("expression$index", fontSize = 36.sp)
+                    Text("result$index", fontSize = 36.sp)
+                }
+            }
+        }
+    }
     Column(
         modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp).clip(
             RoundedCornerShape(
                 topEnd = 0.dp, topStart = 0.dp, bottomEnd = 36.dp, bottomStart = 36.dp
             )
-        ).background(Surfaces.surfaceContainer(Surfaces.HIGHEST)).weight(3f, fill = true)
-            .statusBarsPadding().horizontalSystemBarsPadding(),
+        ).background(Surfaces.surfaceContainer(Surfaces.HIGHEST)).height(parentHeight * (3f / 7f))
+            .statusBarsPadding().horizontalSystemBarsPadding()
+            .draggable(
+                state = rememberDraggableState {
+                    if (
+                        (dragOffset.targetValue < parentPxHeight * MID_RATE_LOW
+                                && dragOffset.targetValue + it >= parentPxHeight * MID_RATE_LOW)
+                        || (dragOffset.targetValue > parentPxHeight * MID_RATE_LOW
+                                && dragOffset.targetValue + it <= parentPxHeight * MID_RATE_LOW)
+                        || (dragOffset.targetValue < parentPxHeight * MID_RATE_HIGH
+                                && dragOffset.targetValue + it >= parentPxHeight * MID_RATE_HIGH)
+                        || (dragOffset.targetValue > parentPxHeight * MID_RATE_HIGH
+                                && dragOffset.targetValue + it <= parentPxHeight * MID_RATE_HIGH)
+                    ) {
+                        localHapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                    }
+                    coroutineScope.launch {
+                        dragOffset.animateTo(
+                            targetValue = dragOffset.targetValue + it
+                        )
+                    }
+                },
+                orientation = Orientation.Vertical,
+                onDragStopped = {
+                    val now = localDensity.run { dragOffset.value.toDp() }
+                    val rate: Float = now / parentHeight
+                    if (rate < MID_RATE_LOW) {
+                        dragOffset.animateTo(
+                            targetValue = 0f
+                        )
+                    } else if (rate < MID_RATE_HIGH) {
+                        dragOffset.animateTo(
+                            targetValue = parentPxHeight * RATE_LOW
+                        )
+                    } else {
+                        dragOffset.animateTo(
+                            targetValue = parentPxHeight * RATE_HIGH
+                        )
+                    }
+                }
+            ),
     ) {
         textField()
     }
     Column(
-        modifier = Modifier.horizontalSystemBarsPadding().padding(horizontal = 4.dp).weight(4f)
+        modifier = Modifier.horizontalSystemBarsPadding().offset {
+            var yOffset = 0f
+            if (dragOffset.value > parentPxHeight * RATE_LOW) {
+                yOffset = dragOffset.value - parentPxHeight * RATE_LOW
+            }
+            IntOffset(0, yOffset.toInt())
+        }.padding(horizontal = 4.dp)
+            .height(parentHeight * 4f / 7f)
     ) {
         if (!isDeviceInPortraitMode()) {
             Row(modifier = Modifier.weight(1f)) {
@@ -250,3 +345,13 @@ fun RowScope.KeyButton(
         }
     }
 }
+
+@Composable
+fun HistoryDate(
+    history: History
+) {
+    Row() {
+        Text("昨天", fontSize = 28.sp)
+    }
+}
+
