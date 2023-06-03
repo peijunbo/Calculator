@@ -76,7 +76,7 @@ fun Screen(
                             expression
                         } else {
                             val expressionText = expression.text
-                            val resultText = result
+                            val resultText = res
                             withContext(Dispatchers.Default) {
                                 DatabaseUtil.insertHistory(History(
                                     0,
@@ -97,7 +97,7 @@ fun Screen(
                                 expressionParser.getCleanExpression(it.text, ".", ","),
                                 true
                             ).toString()
-
+                            println(expression.text)
                             result = if (res == "NaN") {""} else res
                         }
                     }

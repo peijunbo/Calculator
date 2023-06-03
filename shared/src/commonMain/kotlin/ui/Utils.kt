@@ -17,7 +17,7 @@ fun TextFieldValue.concatKey(key: Key): TextFieldValue {
     var index: Int = right
     val newText: String = when (key) {
         is Key.Dot -> {
-            var newString = key.string
+            var newString = "."
             if (left > 0) {
                 // cannot input dot if there is no number prefix
                 val prefix = this.text[left - 1]
@@ -57,6 +57,13 @@ fun TextFieldValue.concatKey(key: Key): TextFieldValue {
                         key.operator
                     )
                 }
+            } else if (key is Key.Brackets) {
+                index += 1
+                this.text.replaceRange(
+                    this.selection.min,
+                    this.selection.max,
+                    "()"
+                )
             } else {
                 index += key.string.length
                 this.text.replaceRange(

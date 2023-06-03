@@ -18,9 +18,9 @@ sealed class Key(val string: String) {
     object Seven : NumberKey("7")
     object Eight : NumberKey("8")
     object Nine : NumberKey("9")
-    object Dot : NumberKey(".")
+    object Dot : NumberKey("·")
     object Plus : BinaryOperatorKey("+")
-    object Minus : BinaryOperatorKey("−")
+    object Minus : BinaryOperatorKey("-")
     object Multiply : BinaryOperatorKey("×")
     object Division : BinaryOperatorKey("÷")
     object Root : UnaryOperatorKey("√")
@@ -30,5 +30,5 @@ sealed class Key(val string: String) {
     object AC : ActionKey("AC")
     object Clear : OperatorKey("C")
     object Delete : ActionKey("⌫")
-    object Brackets : OperatorKey("()")
+    object Brackets : OperatorKey("( )")
 }
