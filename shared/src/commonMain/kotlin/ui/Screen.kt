@@ -77,14 +77,12 @@ fun Screen(
                         } else {
                             val expressionText = expression.text
                             val resultText = res
-                            withContext(Dispatchers.Default) {
-                                DatabaseUtil.insertHistory(History(
-                                    0,
-                                    expressionText,
-                                    resultText,
-                                    getDateLong()
-                                ))
-                            }
+                            DatabaseUtil.insertHistory(History(
+                                0,
+                                expressionText,
+                                resultText,
+                                getDateLong()
+                            ))
                             result = ""
                             TextFieldValue(res, TextRange(res.length))
                         }
