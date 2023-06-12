@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,10 +54,11 @@ val expressionParser = Expression()
 
 @Composable
 fun Screen(
+    expressionText: MutableState<TextFieldValue>,
     containerColor: Color = Surfaces.surfaceContainer(Surfaces.HIGHEST),
     contentColor: Color = MaterialTheme.colorScheme.onSurface
 ) {
-    var expression by remember { mutableStateOf(TextFieldValue("")) }
+    var expression by expressionText
     var result by remember { mutableStateOf("") }
     val subscriptionCount by StateHolder.keyFlow.subscriptionCount.collectAsState()
     val focusRequester = remember { FocusRequester() }
@@ -67,6 +69,7 @@ fun Screen(
         Color.Transparent,
         LocalTextSelectionColors.current.backgroundColor
     )
+
     var isHandleHidden by remember { mutableStateOf(false) }
     var isError by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
@@ -80,7 +83,6 @@ fun Screen(
                         result = ""
                         expression.concatKey(key)
                     }
-
                     is Key.Equal -> {
                         val res = calculator.evaluate(
                             expressionParser.getCleanExpression(expression.text, ".", ","),
@@ -106,12 +108,10 @@ fun Screen(
 
                     else -> {
                         expression.concatKey(key = key).also {
-
                             val res = calculator.evaluate(
                                 expressionParser.getCleanExpression(it.text, ".", ","),
                                 true
                             ).toString()
-                            println(expression.text)
                             result = if (res == "NaN") {""} else res
                         }
                     }
@@ -144,8 +144,8 @@ fun Screen(
                 value = expression,
                 onValueChange = {
                     isHandleHidden = false
-                    println("value change")
                     expression = it
+                    isError = false
                 },
                 singleLine = true,
             )

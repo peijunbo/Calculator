@@ -29,7 +29,7 @@ import theme.Surfaces
 @Composable
 fun HistoryDrawer(
     modifier: Modifier = Modifier,
-    onClick: (history: History) -> Unit = {}
+    onClick: (text: String) -> Unit = {}
 ) {
     val histories by DatabaseUtil.histories.collectAsState(listOf())
     LazyColumn(
@@ -55,7 +55,7 @@ fun HistoryDrawer(
                         Text(
                             modifier = Modifier.fillMaxWidth()
                                 .horizontalScroll(rememberScrollState()).clickable {
-                                onClick(history)
+                                onClick(history.expression)
                             }.padding(horizontal = 16.dp),
                             text = history.expression,
                             textAlign = TextAlign.Right,
@@ -68,7 +68,7 @@ fun HistoryDrawer(
                         Text(
                             modifier = Modifier.fillMaxWidth()
                                 .horizontalScroll(rememberScrollState()).clickable {
-                                onClick(history)
+                                onClick(history.result)
                             }.padding(horizontal = 16.dp),
                             text = history.result,
                             textAlign = TextAlign.Right,

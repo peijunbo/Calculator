@@ -9,7 +9,9 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-
+fun String.toTextFieldValue(
+    selection: TextRange = TextRange(this.length)
+)  = TextFieldValue(this, selection = selection)
 fun TextFieldValue.concatKey(key: Key): TextFieldValue {
     println("$key ${this.selection.min} -- ${this.selection.max}")
     val left = this.selection.min

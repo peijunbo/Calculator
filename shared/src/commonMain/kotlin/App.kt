@@ -54,6 +54,7 @@ import ui.RATE_LOW
 import ui.Screen
 import ui.StateHolder
 import ui.dateLongToString
+import ui.toTextFieldValue
 
 
 @Composable
@@ -92,11 +93,15 @@ private fun AppPage(
     val localDensity = LocalDensity.current
     val parentPxHeight = localDensity.run { windowHeight.toPx() }
     val localHapticFeedback = LocalHapticFeedback.current
+    val expressionText = remember { mutableStateOf("".toTextFieldValue()) }
     HistoryDrawer(
         modifier = Modifier
             .fillMaxWidth().height(localDensity.run { dragOffset.value.toDp() })
             .background(color = Surfaces.surfaceContainer())
-            .statusBarsPadding().horizontalSystemBarsPadding()
+            .statusBarsPadding().horizontalSystemBarsPadding(),
+        onClick = {
+            expressionText.value = it.toTextFieldValue()
+        }
     )
     Column(
         modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp).clip(
@@ -145,7 +150,9 @@ private fun AppPage(
                 }
             ),
     ) {
-        Screen()
+        Screen(
+            expressionText
+        )
     }
     Column(
         modifier = Modifier.horizontalSystemBarsPadding().offset {
