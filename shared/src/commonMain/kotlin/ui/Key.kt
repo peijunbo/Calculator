@@ -2,11 +2,14 @@ package ui
 
 sealed class Key(val string: String) {
 
-    sealed class NumberKey(val number: String) : Key(number)
-    sealed class OperatorKey(val operator: String) : Key(operator)
+    sealed class NumberKey(number: String) : Key(number)
+    sealed class OperatorKey(operator: String) : Key(operator)
     sealed class UnaryOperatorKey(operator: String) : OperatorKey(operator)
     sealed class BinaryOperatorKey(operator: String) : OperatorKey(operator)
-    sealed class ActionKey(val action: String) : Key(action)
+    sealed class ActionKey(action: String) : Key(action)
+
+    sealed class FunctionKey(func: String) : Key(string = func)
+
     object Zero : NumberKey("0")
 
     object One : NumberKey("1")
@@ -19,6 +22,18 @@ sealed class Key(val string: String) {
     object Eight : NumberKey("8")
     object Nine : NumberKey("9")
     object Dot : NumberKey("·")
+    object PI : NumberKey("π")
+    object E : NumberKey("e")
+    object Ln : FunctionKey("ln")
+    object Log : FunctionKey("log")
+    object Cos : FunctionKey("cos")
+    object Sin : FunctionKey("sin")
+    object Tan : FunctionKey("tan")
+    object ArcCos : FunctionKey("cos⁻¹")
+    object ArcSin : FunctionKey("sin⁻¹")
+    object ArcTan : FunctionKey("tan⁻¹")
+    object Exp : FunctionKey("eˣ")
+    object PowerOfTen : FunctionKey("10ˣ")
     object Plus : BinaryOperatorKey("+")
     object Minus : BinaryOperatorKey("-")
     object Multiply : BinaryOperatorKey("×")
@@ -26,9 +41,13 @@ sealed class Key(val string: String) {
     object Root : UnaryOperatorKey("√")
     object Power : BinaryOperatorKey("^")
     object Percent : UnaryOperatorKey("%")
+    object Factorial : UnaryOperatorKey("!")
+    object Square : UnaryOperatorKey("x²")
     object Equal : ActionKey("=")
     object AC : ActionKey("AC")
-    object Clear : OperatorKey("C")
+    object Inversion : ActionKey("INV")
+    object Radian : ActionKey("RAD")
     object Delete : ActionKey("⌫")
     object Brackets : OperatorKey("( )")
+    object Clear : OperatorKey("C")
 }

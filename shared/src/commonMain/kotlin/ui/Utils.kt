@@ -54,7 +54,7 @@ fun TextFieldValue.concatKey(key: Key): TextFieldValue {
                     this.text.replaceRange(
                         this.selection.min,
                         this.selection.max,
-                        key.operator
+                        key.string
                     )
                 }
             } else if (key is Key.Brackets) {
@@ -69,7 +69,7 @@ fun TextFieldValue.concatKey(key: Key): TextFieldValue {
                 this.text.replaceRange(
                     this.selection.min,
                     this.selection.max,
-                    key.operator
+                    key.string
                 )
             }
         }
@@ -92,6 +92,7 @@ fun TextFieldValue.concatKey(key: Key): TextFieldValue {
         }
 
         else -> {
+            //TODO process FunctionKey
             ""
         }
     }
